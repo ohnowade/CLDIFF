@@ -22,6 +22,7 @@ public class SearchEngine {
     }
 
     public SearchEngine(String oldPath, String newPath, String repoName, P_LANG lang) {
+        repoName = repoName.toLowerCase(Locale.ROOT);
         oldPath = Paths.get(oldPath).toString();
         newPath = Paths.get(newPath).toString();
         GitCreator gitCreator = new GitCreator();

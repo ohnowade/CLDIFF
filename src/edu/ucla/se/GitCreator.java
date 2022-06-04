@@ -117,7 +117,7 @@ public class GitCreator {
             return null;
         }
 
-        return Paths.get(Config.REPO_PATH, repoName).toString();
+        return Paths.get(Config.REPO_PATH, repoName, ".git").toString();
     }
 
 

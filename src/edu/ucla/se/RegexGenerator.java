@@ -82,6 +82,9 @@ public class RegexGenerator {
      * **/
     public ArrayList<String> processFunction(String func){
         ArrayList<String> ret = new ArrayList<>();
+        if (func.trim().charAt(0) == '('){
+            return ret;
+        }
         Integer args = 1;
         for (int i = 0; i < func.length(); i++){
             if (func.charAt(i) == '(' && i+1 < func.length() && func.charAt(i+1) == ')'){
@@ -111,6 +114,8 @@ public class RegexGenerator {
                 regex += "\\";
                 regex += s;
             }else if (s.equals("funcstart")){
+                if (i+2 >= tokens.size()) continue;
+                if (tokens.get(i+2).length() <= 0) continue;
                 regex += unit;
                 Integer argsNum = Integer.parseInt(tokens.get(i+1));
                 if (tokens.get(i+2).equals("elseif")){
@@ -176,20 +181,33 @@ public class RegexGenerator {
                 }
             }
             tokens.add(token);
-            if (token.size() < shortest){
-                shortest = i;
-            }
         }
 //        System.out.println(tokens);
 
         //Step2: union set
-        ArrayList<String> based = tokens.get(shortest);
-        for (ArrayList<String> other: tokens){
-            based.retainAll(other);
+        double threshold = 0.4;
+        ArrayList<String> maximum = new ArrayList<>();
+        for (ArrayList<String> based: tokens){
+//            System.out.printf("Current base: %s\n", based);
+            ArrayList<String> previous = (ArrayList<String>) based.clone();
+            ArrayList<String> temp = (ArrayList<String>) based.clone();
+            for (ArrayList<String> other: tokens){
+                temp.retainAll(other);
+//                System.out.printf("Current temp: %s\n", temp);
+                if (temp.size() < based.size() * threshold){
+                    temp = (ArrayList<String>)previous.clone();
+                }else{
+                    previous = (ArrayList<String>)temp.clone();
+                }
+            }
+            if (previous.size() > maximum.size()){
+//                System.out.printf("Final output for one base: %s\n", previous);
+                maximum = previous;
+            }
         }
 //        System.out.println(based);
 
-        String regex = generator(based);
+        String regex = generator(maximum);
 
         regex = regex.replaceAll("[\\s,]+",".*");   // replace all ',' and ' ' with .*
 
@@ -203,7 +221,14 @@ public class RegexGenerator {
         for (Integer g: codeSnippet.keySet()){
             ArrayList<String> codes = codeSnippet.get(g);
             String pattern = findRegex(codes);
-            ret.add(pattern);
+            pattern.replaceAll("\\[", "\\[");
+            String _check = pattern.replaceAll("\\.\\*","");
+            String _check2 = pattern.replaceAll("\\w", "");
+            if (_check.length() != 0 && _check2.length() != pattern.length()){
+                ret.add(pattern);
+            }else{
+                ret.add(null);
+            }
         }
 
         return ret;

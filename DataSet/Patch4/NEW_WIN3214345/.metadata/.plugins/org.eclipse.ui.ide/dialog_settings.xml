@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="ExternalProjectImportWizard">
+		<item value="false" key="WizardProjectsImportPage.STORE_ARCHIVE_SELECTED"/>
+		<item value="false" key="WizardProjectsImportPage.STORE_COPY_PROJECT_ID"/>
+		<item value="false" key="WizardProjectsImportPage.STORE_NESTED_PROJECTS"/>
+		<list key="WizardProjectsImportPage.STORE_DIRECTORIES">
+			<item value="/home/troy/CriticsEvalSWT/SWT1/NEW_WIN3214345"/>
+			<item value="/home/troy/CriticsEvalSWT/SWT1/OLD_WIN3214344"/>
+			<item value="/home/troy/CriticsEvalSWT/SWT1/OLD_GTK14344"/>
+			<item value="/home/troy/CriticsEvalSWT/SWT1/OLD_CARBON14346"/>
+			<item value="/home/troy/CriticsEvalSWT/SWT1/OLD_CARBON14344"/>
+		</list>
+		<list key="WizardProjectsImportPage.STORE_ARCHIVES">
+			<item value=""/>
+		</list>
+	</section>
+</section>

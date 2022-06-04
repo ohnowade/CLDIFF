@@ -58,7 +58,7 @@ public class LCSMatcher {
         PEAM peam = new PEAM(sc);
 
         double sim_score_thres = 0.79;
-        double min_sup_ratio = 1;
+        double min_sup_ratio = 0.8;
         double match_score = 0.8;
 
         System.out.println("Start Finding Patterns...");

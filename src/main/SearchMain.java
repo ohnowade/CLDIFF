@@ -13,7 +13,6 @@ public class SearchMain {
 
     public static void main(String[] args) throws IOException, ParseException, org.json.simple.parser.ParseException {
         System.out.println("Start running search...");
-        System.out.println("Working Directory = " + System.getProperty("user.dir"));
 
         String oldPath = "./DataSet/testPatch1/old";
         String newPath = "./DataSet/testPatch1/new";

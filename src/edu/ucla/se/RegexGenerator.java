@@ -118,9 +118,6 @@ public class RegexGenerator {
      * **/
     public ArrayList<String> processFunction(String func){
         ArrayList<String> ret = new ArrayList<>();
-        if (func.trim().charAt(0) == '('){
-            return ret;
-        }
         Integer args = 1;
         for (int i = 0; i < func.length(); i++){
             if (func.charAt(i) == '(' && i+1 < func.length() && func.charAt(i+1) == ')'){
@@ -165,7 +162,6 @@ public class RegexGenerator {
                     i += 2;
                     continue;
                 }
-
                 regex += unit;
                 if (tokens.get(i+2).equals("elseif")){
                     regex = regex + "else\\sif.*";
@@ -235,6 +231,9 @@ public class RegexGenerator {
                 }
             }
             tokens.add(token);
+            if (token.size() < shortest){
+                shortest = i;
+            }
         }
         System.out.println(tokens);
 

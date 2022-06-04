@@ -58,8 +58,9 @@ public class LCSMatcher {
         PEAM peam = new PEAM(sc);
 
         double sim_score_thres = 0.79;
-        double min_sup_ratio = 1;
+        double min_sup_ratio = 0.8;
         double match_score = 0.8;
+        double match_pattern_ratio = 0.3;
 
         System.out.println("Start Finding Patterns...");
         peam.FindFrequentPattern(oldContentsCode, sim_score_thres, min_sup_ratio);
@@ -69,7 +70,7 @@ public class LCSMatcher {
         int pattern_cnt = peam.GetPatternCnt();
 
         return gitHandler.matchLCS(peam,4,
-                                   (int) Math.max((pattern_cnt*0.7),1),
-                                   (int) Math.max((pattern_cnt*0.7),1), match_score);
+                                   (int) Math.max((pattern_cnt*match_pattern_ratio),1),
+                                   (int) Math.max((pattern_cnt*match_pattern_ratio),1), match_score);
     }
 }

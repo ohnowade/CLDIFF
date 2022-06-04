@@ -126,11 +126,13 @@ public class PEAM {
 			double match_score) throws IOException {
 		File file = new File(search_path.toString());
 		if (file.isFile()) {
-			return FindMatch(search_path, 
-					max_interval, 
-					min_stmt_cnt,
-					min_hit_patterns, 
-					match_score);
+			Map<String, List<MissingChangeInfo>> curMap = new HashMap<>();
+			curMap.put(search_path.toString(),FindMatch(search_path,
+														max_interval,
+														min_stmt_cnt,
+														min_hit_patterns,
+														match_score));
+			return curMap;
 		}
 		else {
 			Map<String, List<MissingChangeInfo> > return_results = new HashMap<>();
@@ -139,11 +141,13 @@ public class PEAM {
 					// there will not be duplicate key, so putAll is safe
 					String fname = p.toString();
 					if (fname.endsWith(".java")) {
-						return_results.putAll(FindMatch(p,
-							max_interval, 
-							min_stmt_cnt,
-							min_hit_patterns, 
-							match_score));
+						Map<String, List<MissingChangeInfo>> curMap = new HashMap<>();
+						curMap.put(p.toString(), FindMatch(p,
+												max_interval,
+												min_stmt_cnt,
+												min_hit_patterns,
+												match_score));
+						return_results.putAll(curMap);
 					}
 				}
 			}
@@ -151,7 +155,7 @@ public class PEAM {
 		}
 	}
 	
-	public Map<String, List<MissingChangeInfo> > FindMatch(Path file_name, int max_interval, int min_stmt_cnt, 
+	public List<MissingChangeInfo> FindMatch(Path file_name, int max_interval, int min_stmt_cnt,
 			int min_hit_patterns, double match_score) throws IOException {
 		List<MissingChangeInfo> results = new ArrayList<>();
 		StatementsWithLineNumber stmts_with_line = new StatementsWithLineNumber(file_name);
@@ -224,9 +228,8 @@ public class PEAM {
 			}
 			i++;
 		}
-		HashMap <String, List<MissingChangeInfo> > return_results = new HashMap<>();
-		return_results.put(file_name.toString(), results);
-		return return_results;
+
+		return results;
 	}
 	
 	private String GetPattern(ArrayList<String> stmt_class) {

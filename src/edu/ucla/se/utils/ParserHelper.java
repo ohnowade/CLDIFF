@@ -296,8 +296,20 @@ public class ParserHelper {
         System.out.println("All file names: " + listOfChangedFileNames);
         HashMap<String, HashMap<Integer, List<List<Integer>>>> systematicChangeGroup = new HashMap<>();
         for (String file : listOfChangedFileNames) {
-            systematicChangeGroup.put(file, parseSingleFile(commitId, file, repoName, testPatch));
+            HashMap<Integer, List<List<Integer>>> tempMap = parseSingleFile(commitId, file, repoName, testPatch);
+            boolean isBreak = false;
+            for (Integer i : tempMap.keySet()) {
+                if (tempMap.get(i).size() == 0 || tempMap.get(i).get(0).size() == 0) {
+                    isBreak = true;
+                    break;
+                }
+            }
+            if (isBreak) {
+                continue;
+            }
+            systematicChangeGroup.put(file, tempMap);
         }
+        System.out.println(systematicChangeGroup);
         HashMap<Integer, HashMap<String, List<List<Integer>>>> groupChanges = mapConverter(systematicChangeGroup);
         System.out.println("All grouped changes: " + groupChanges);
         return groupChanges;

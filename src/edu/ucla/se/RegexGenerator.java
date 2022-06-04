@@ -37,6 +37,36 @@ public class RegexGenerator {
         this.gitHandler = gitHandler;
     }
 
+    public HashMap<String, List<List<Integer>>> cleanSnippet(HashMap<String, List<List<Integer>>> files) {
+        HashMap<String, List<List<Integer>>> ret = new HashMap<>();
+        for (Map.Entry f : files.entrySet()) {
+            String fileName = (String)f.getKey();
+            HashMap<Integer, Integer> lens = new HashMap<>();
+            for (List<Integer> code : files.get(fileName)){
+                if (lens.containsKey(code.size())){
+                    lens.put(code.size(), lens.get(code.size()) + 1);
+                }else{
+                    lens.put(code.size(), 1);
+                }
+            }
+            Integer commonLength = 0;
+            int mostCount = 0;
+            for (Integer len : lens.keySet()){
+                if (lens.get(len) > mostCount){
+                    commonLength = len;
+                    mostCount = lens.get(len);
+                }
+            }
+            List<List<Integer>> cleaned = new ArrayList<>();
+            for (List<Integer> code : files.get(fileName)){
+                if (code.size() == commonLength){
+                    cleaned.add(code);
+                }
+            }
+            ret.put(fileName, cleaned);
+        }
+        return ret;
+    }
 
     /**
      *
@@ -47,8 +77,12 @@ public class RegexGenerator {
 
         for (Integer g : grouping.keySet()) {           // group
             HashMap<String, List<List<Integer>>> files = grouping.get(g);
+
+            // remove snippets with different length
+            files= cleanSnippet(files);
             this.dict = gitHandler.getOldFileContentByLine(files);
             ArrayList<String> val = new ArrayList<>();
+
 
             for (Map.Entry f: files.entrySet()){        // file
                 String fileName = (String)f.getKey();
@@ -60,7 +94,9 @@ public class RegexGenerator {
                     String code = "";
                     for (int j = 0; j < files.get(fileName).get(i).size(); j++) {    // lines of code
                         Integer idx = files.get(fileName).get(i).get(j);
-                        code += "#;";       // new line
+                        if (j != 0){
+                            code += "#;";       // new line
+                        }
                         if (!fileCodeDict.containsKey(idx)){
                             continue;
                         }
@@ -114,10 +150,23 @@ public class RegexGenerator {
                 regex += "\\";
                 regex += s;
             }else if (s.equals("funcstart")){
-                if (i+2 >= tokens.size()) continue;
-                if (tokens.get(i+2).length() <= 0) continue;
+                if (i+2 >= tokens.size()) {
+                    i += 2;
+                    continue;
+                }
+                if (tokens.get(i+2).length() <= 0){
+                    i += 2;
+                    continue;
+                }
+                Integer argsNum = 0;
+                try{
+                    argsNum = Integer.parseInt(tokens.get(i+1));
+                } catch (NumberFormatException err){
+                    i += 2;
+                    continue;
+                }
+
                 regex += unit;
-                Integer argsNum = Integer.parseInt(tokens.get(i+1));
                 if (tokens.get(i+2).equals("elseif")){
                     regex = regex + "else\\sif.*";
                 }else{
@@ -127,14 +176,17 @@ public class RegexGenerator {
                     regex += tokens.get(i+2);
                     regex += unit;
                 }
-                regex += "(";
+                regex += "\\(";
                 for (int j = 0; j < argsNum; ++j){
                     regex += unit;
                     if (j != argsNum-1) regex += ",";
                 }
-                regex += ")";
+                regex += "\\)";
+                regex += unit;
                 i += 2;
             }else if (s.equals("#")){
+                regex += unit;
+                regex += "\\n";
                 regex += unit;
             }else if (new String(escape).indexOf(s.charAt(0)) != -1){
                 regex += unit;
@@ -143,20 +195,22 @@ public class RegexGenerator {
                 regex += unit;
             }
             else{
+                regex += unit;
                 regex += s;
+                regex += unit;
             }
         }
         regex += unit;
         return regex;
     }
 
-    public String findRegex(ArrayList<String> codes){
+    public ArrayList<String> findRegex(ArrayList<String> codes){
         // input: ["event.item = item;sendEvent(true, event);", "ev.item = item;sendEvent(true, ev);"]
         // parse: ["event", ".item", "=item", "funcstart", "2", "sendEvent"]
         // output ".*\\.item=.*sendEvent(.*,.*)"
         // output "(\\S*)\.item=(\\S*)sendEvent(true,\\1)"
 
-        System.out.println(codes);
+//        System.out.println(codes);
 
         String delimiter = "((?=\\.|=|\\+|-|\\*|/|%|\\^|<|>|<=|>=)|(;|\\{|\\})|(?<=\\+|-|\\*|/|%|\\^|<|>|<=|>=))";
         ArrayList<ArrayList<String>> tokens = new ArrayList<>();
@@ -182,11 +236,12 @@ public class RegexGenerator {
             }
             tokens.add(token);
         }
-//        System.out.println(tokens);
+        System.out.println(tokens);
 
         //Step2: union set
-        double threshold = 0.4;
-        ArrayList<String> maximum = new ArrayList<>();
+        double threshold = 1;
+        double currentMax = Double.POSITIVE_INFINITY;
+        ArrayList<ArrayList<String>> maximum = new ArrayList<>();
         for (ArrayList<String> based: tokens){
 //            System.out.printf("Current base: %s\n", based);
             ArrayList<String> previous = (ArrayList<String>) based.clone();
@@ -200,34 +255,48 @@ public class RegexGenerator {
                     previous = (ArrayList<String>)temp.clone();
                 }
             }
-            if (previous.size() > maximum.size()){
+            if (previous.size() == currentMax){
 //                System.out.printf("Final output for one base: %s\n", previous);
-                maximum = previous;
+                maximum.add(previous);
+            }else if (previous.size() < currentMax){
+                maximum.clear();
+                maximum.add(previous);
+                currentMax = previous.size();
             }
         }
-//        System.out.println(based);
+        System.out.printf("Union result: %s\n", maximum);
 
-        String regex = generator(maximum);
+        ArrayList<String> regexSet = new ArrayList<>();
+        for (ArrayList<String> regexToken: maximum){
+            String regex = generator(regexToken);
+            regex = regex.replaceAll("[\\s,]+",".*");   // replace all ',' and ' ' with .*
+            if (!regexSet.contains(regex)){
+                regexSet.add(regex);
+            }
+        }
 
-        regex = regex.replaceAll("[\\s,]+",".*");   // replace all ',' and ' ' with .*
-
-        return regex;
+        return regexSet;
     }
 
     public ArrayList<String> generateRegex(){
         HashMap<Integer,ArrayList<String>> codeSnippet = getCodeSnippet();
+        System.out.println(codeSnippet);
         ArrayList<String> ret = new ArrayList<>();
 
         for (Integer g: codeSnippet.keySet()){
             ArrayList<String> codes = codeSnippet.get(g);
-            String pattern = findRegex(codes);
-            pattern.replaceAll("\\[", "\\[");
-            String _check = pattern.replaceAll("\\.\\*","");
-            String _check2 = pattern.replaceAll("\\w", "");
-            if (_check.length() != 0 && _check2.length() != pattern.length()){
-                ret.add(pattern);
-            }else{
-                ret.add(null);
+            ArrayList<String> patternSet = findRegex(codes);
+            for (String pattern : patternSet){
+                pattern = pattern.replaceAll("\\[", "\\\\[");
+                pattern = pattern.replaceAll("\\]", "\\\\]");
+                pattern = pattern.replaceAll("(\\.\\*){2,}", ".*");
+                String _check = pattern.replaceAll("\\.\\*","");
+                String _check2 = pattern.replaceAll("\\w", "");
+                if (_check.length() != 0 && _check2.length() != pattern.length()){
+                    ret.add(pattern);
+                }else{
+                    ret.add(null);
+                }
             }
         }
 

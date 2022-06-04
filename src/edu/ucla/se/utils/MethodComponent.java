@@ -42,8 +42,24 @@ public class MethodComponent {
     }
 
     public void calulateChangeScopeList() {
-        this.changeScopeList.addAll(this.changeScope);
-        Collections.sort(changeScopeList);
+        int max_ = 0;
+        int min_ = Integer.MAX_VALUE;
+        for (Integer i : changeScope) {
+            if (i > max_) {
+                max_ = i;
+            }
+            if (i < min_) {
+                min_ = i;
+            }
+        }
+        if (max_ - min_ > 50) {
+            return;
+        }
+        for (int i = min_; i <= max_; i ++) {
+            changeScopeList.add(i);
+        }
+//        changeScopeList.addAll(changeScope);
+//        Collections.sort(changeScopeList);
     }
 
 

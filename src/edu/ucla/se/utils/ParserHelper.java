@@ -272,6 +272,9 @@ public class ParserHelper {
         List<MethodComponent> listOfComponent = ph.listOfComponent;
         List<List<Integer>> finalResult = new ArrayList<>();
         for (MethodComponent mC : listOfComponent) {
+            if (mC.changeScopeList.size() == 0) {
+                continue;
+            }
             finalResult.add(new ArrayList<>(mC.changeScopeList));
         }
 

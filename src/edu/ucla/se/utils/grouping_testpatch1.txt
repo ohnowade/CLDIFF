@@ -11,7 +11,7 @@ DefaultCommentMapper. TypeDeclaration: DefaultCommentMapper (20,591) listSize:11
 12. moveSingleVariableDeclaration (139,139)
 139. updateMethodDeclaration declaration (139,151)
 
-DefaultCommentMapper. MethodDeclaration:   (106,123) listSize:11
+DefaultCommentMapper. MethodDeclaration: getLeadingComments (106,123) listSize:11
 129. Change If condition with/by... (112,121)
 16. Change.Move ArrayType (113,113)
 25. Change.Move SimpleName (113,113)
@@ -43,7 +43,6 @@ DefaultCommentMapper. MethodDeclaration: getLeadingCommentsAnomaly2 (125,137) li
 67. Insert For's condition and body (156,158)
 94. Insert If condition and body (157,157)
 
-<<<<<<< HEAD
 DefaultCommentMapper. MethodDeclaration: getLeadingCommentsAnomaly3 (139,151) listSize:11
 64. Insert VariableDeclaration (138,138)
 65. Insert For's condition and body (139,141)
@@ -56,23 +55,6 @@ DefaultCommentMapper. MethodDeclaration: getLeadingCommentsAnomaly3 (139,151) li
 43. Change.Move SimpleName (141,141)
 119. Delete VariableDeclaration (141,141)
 142. Change ExpressionStatement's expression with/by... (142,142)
-=======
-DefaultCommentMapper. MethodDeclaration: getLeadingCommentsAnomaly3 (153,168) listSize:14
-60. Insert If condition and body (126,135)
-63. Insert VariableDeclaration (127,127)
-13. moveArrayType (153,153)
-14. moveSingleVariableDeclaration (153,153)
-133. updateMethodDeclaration declaration (153,168)
-null (154,166)
-17. Change.Move FieldAccess's condition (154,154)
-73. Delete While's condition and body (154,166)
-26. Change.Move SimpleName (155,155)
-83. Delete VariableDeclaration (155,155)
-84. Delete For's condition and body (156,158)
-45. Change.Move ThisExpression condition (157,157)
-46. Change.Move SimpleName condition (157,157)
-136. Change ExpressionStatement's expression with/by... (159,159)
->>>>>>> 20b4c7ad9ac10a1310c72b259a5bd29301dc7507
 
 DefaultCommentMapper. MethodDeclaration: getTrailingComments (153,170) listSize:9
 131. Change If condition with/by... (159,168)
@@ -151,7 +133,6 @@ DefaultCommentMapper. MethodDeclaration: storeLeadingComments (266,374) listSize
 100. Insert ExpressionStatement (423,423)
 101. Insert ExpressionStatement (424,424)
 
-<<<<<<< HEAD
 DefaultCommentMapper. MethodDeclaration: storeTrailingComments (376,484) listSize:38
 13. Change.Move InfixExpression condition (400,400)
 116. Delete If condition and body (400,404)
@@ -194,44 +175,3 @@ DefaultCommentMapper. MethodDeclaration: storeTrailingComments (376,484) listSiz
 
 DefaultCommentMapper. MethodDeclaration: getTrailingCommentsCopy (506,523) listSize:1
 126. Delete ExpressionStatement (514,514)
-=======
-DefaultCommentMapper. MethodDeclaration: storeTrailingComments (431,583) listSize:38
-61. Insert If condition and body (400,404)
-15. Change.Move InfixExpression condition (455,455)
-79. Delete If condition and body (455,469)
-101. Delete If condition and body (457,465)
-102. Delete ExpressionStatement (466,466)
-5. Move ExpressionStatement (467,467)
-33. Change.Move ArrayCreation (467,467)
-38. Change.Move ThisExpression (467,467)
-39. Change.Move SimpleName (467,467)
-129. Change ExpressionStatement's expression with/by... (467,467)
-6. Move Return (468,468)
-16. Change.Move InfixExpression condition (534,534)
-80. Delete If condition and body (534,581)
-7. Move If null (536,543)
-106. Delete If condition and body (545,553)
-98. Delete VariableDeclaration (550,550)
-99. Delete ExpressionStatement (551,551)
-100. Delete ExpressionStatement (552,552)
-107. Delete ExpressionStatement (554,554)
-21. Change.Move ArrayType (555,555)
-42. Change.Move ArrayCreation (555,555)
-108. Delete VariableDeclaration (555,555)
-109. Delete ExpressionStatement (556,556)
-9. Move ExpressionStatement (558,558)
-110. Delete VariableDeclaration (560,560)
-111. Delete VariableDeclaration (561,561)
-112. Delete LabeledStatement (562,570)
-35. Change.Move ArrayType (563,563)
-55. Change.Move ArrayAccess condition (564,564)
-56. Change.Move PrefixExpression condition (564,564)
-57. Change.Move ArrayAccess condition (564,564)
-58. Change.Move PrefixExpression condition (564,564)
-3. Move If null (572,579)
-132. Change If condition with/by... (572,579)
-103. Delete VariableDeclaration (573,573)
-104. Delete For's condition and body (574,577)
-105. Delete ExpressionStatement (578,578)
-113. Delete ExpressionStatement (580,580)
->>>>>>> 20b4c7ad9ac10a1310c72b259a5bd29301dc7507

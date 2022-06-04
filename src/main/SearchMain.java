@@ -15,8 +15,8 @@ public class SearchMain {
     public static void main(String[] args) throws IOException, ParseException, org.json.simple.parser.ParseException {
         System.out.println("Start running search...");
 
-        int patchNumber = 1; // you only need to edit patch number here
-        boolean highlevelGroupFLAG = false;
+        int patchNumber = 2; // you only need to edit patch number here
+        boolean highlevelGroupFLAG = true;
 
         String oldPath = String.format("./DataSet/testPatch%d/old", patchNumber);
         String newPath = String.format("./DataSet/testPatch%d/new", patchNumber);

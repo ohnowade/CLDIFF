@@ -51,6 +51,16 @@ public class SearchEngine {
             clDiffLocal.run(commitId, Paths.get(repoPath, ".git").toString(), Config.CLDIFF_OUTPUT_PATH);
             System.out.println();
 
+            if (Config.OUTPUT_TO_FILE) {
+                String filePath = Paths.get(Config.CLDIFF_OUTPUT_PATH, String.format("search_%s_output.txt", repoName))
+                                       .toString();
+                File file = new File(filePath);
+                if (file.exists()) file.delete();
+                file.createNewFile();
+                System.setOut(new PrintStream(new FileOutputStream(file)));
+            }
+
+
             //========================== STEP 1: GET GROUPING INFO ===============================
             System.out.println("========================== Getting Grouping Info ===============================");
             HashMap<Integer, HashMap<String, List<List<Integer>>>> groups = ParserHelper.getChangeGroups(

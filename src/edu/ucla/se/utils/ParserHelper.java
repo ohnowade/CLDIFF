@@ -262,8 +262,6 @@ public class ParserHelper {
             GroupLinkedDiffs linkedDiffGrouper = new GroupLinkedDiffs(changeLinksDisjointSetId);
             HashMap<List<Integer>, Set<List<Integer>>> linkToHigerLevel = linkedDiffGrouper.getLinkedStmtGroups();
 
-            //
-
             HashMap<Integer, List<List<Integer>>> resultOfGroup = ph.getGroupedLines(linkToHigerLevel);
             System.out.println(resultOfGroup);
             return resultOfGroup;

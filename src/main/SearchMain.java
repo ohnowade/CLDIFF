@@ -20,10 +20,6 @@ public class SearchMain {
 
         String oldPath = "./DataSet/Patch1/OLD_JDT9800";
         String newPath = "./DataSet/Patch1/NEW_JDT9801";
-<<<<<<< HEAD
-=======
-
->>>>>>> 5ae65095c45c971c8d9e6024e603084e621156b3
 
         // Get all changed old file names
         // TOOD

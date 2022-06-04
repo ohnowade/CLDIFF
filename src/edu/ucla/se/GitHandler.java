@@ -290,9 +290,10 @@ public class GitHandler {
 
         for (int groupId = 0; groupId < regex.size(); groupId++) {
             String r = regex.get(groupId);
+            if (r == null) continue;
 
             System.out.printf("Matching regex %s of group %d\n", r, groupId);
-            java.util.regex.Pattern curPattern = Pattern.compile(r);
+            Pattern curPattern = Pattern.compile(r);
             RevTree tree = curCommit.getTree();
             TreeWalk treeWalk = new TreeWalk(repository);
             treeWalk.addTree(tree);

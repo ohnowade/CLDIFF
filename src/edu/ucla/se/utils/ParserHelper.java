@@ -257,10 +257,12 @@ public class ParserHelper {
          3. [0, 2]
          */
 
-        boolean highLevelGroupingFLAG = false;
+        boolean highLevelGroupingFLAG = true;
         if (highLevelGroupingFLAG) {
+            boolean singleLineFilterFLAG = true;
             GroupLinkedDiffs linkedDiffGrouper = new GroupLinkedDiffs(changeLinksDisjointSetId);
-            HashMap<List<Integer>, Set<List<Integer>>> linkToHigerLevel = linkedDiffGrouper.getLinkedStmtGroups();
+            HashMap<List<Integer>, Set<List<Integer>>> linkToHigerLevel = linkedDiffGrouper
+                    .getLinkedStmtGroups(singleLineFilterFLAG);
 
             HashMap<Integer, List<List<Integer>>> resultOfGroup = ph.getGroupedLines(linkToHigerLevel);
             System.out.println(resultOfGroup);
@@ -347,7 +349,7 @@ public class ParserHelper {
          */
 
         GroupLinkedDiffs linkedDiffGrouper = new GroupLinkedDiffs(result);
-        HashMap<List<Integer>, Set<List<Integer>>> linkToHigerLevel = linkedDiffGrouper.getLinkedStmtGroups();
+        HashMap<List<Integer>, Set<List<Integer>>> linkToHigerLevel = linkedDiffGrouper.getLinkedStmtGroups(true);
 
         //
         HashMap<Integer, List<List<Integer>>> resultOfGroup = ph.getGroupedLines(linkToHigerLevel);

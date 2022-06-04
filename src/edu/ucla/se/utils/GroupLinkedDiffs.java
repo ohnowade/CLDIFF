@@ -117,7 +117,7 @@ public class GroupLinkedDiffs {
         }
     }
 
-    public HashMap<List<Integer>, Set<List<Integer>>> getLinkedStmtGroups(){
+    public HashMap<List<Integer>, Set<List<Integer>>> getLinkedStmtGroups(boolean singleLineFilterFLAG){
         HashMap<List<Integer>, Set<List<Integer>>> resultEditGroups = new HashMap<> ();
 
         Set<Pair<Integer, Integer>> visitedLocs = new HashSet<>();
@@ -245,35 +245,77 @@ public class GroupLinkedDiffs {
 
             }
         }
+        filterOverlaps(resultEditGroups, singleLineFilterFLAG);
         System.out.println(resultEditGroups);
         return resultEditGroups;
 
     }
 
-    public HashMap<List<Integer>, Set<List<Integer>>> filterOverlaps(
-            HashMap<List<Integer>, Set<List<Integer>>> init_results){
+    public void filterOverlaps(HashMap<List<Integer>, Set<List<Integer>>> init_results, boolean singleLineFiltering){
         ArrayList<List<Integer>> editGroupList = new ArrayList<>(init_results.keySet());
 
-        HashMap<List<Integer>, HashMap<Integer, List<Integer>>> methodLookUp = new HashMap<>();
+        HashMap<List<Integer>, HashMap<Integer, List<List<Integer>>>> methodLookUp = new HashMap<>();
         for (List<Integer> key : init_results.keySet()){
             Set<List<Integer>> locSet = init_results.get(key);
             methodLookUp.put(key, new HashMap<>());
             for ( List<Integer> loc : locSet){
-                methodLookUp.get(key).put(loc.get(0), new ArrayList<>(Arrays.asList(loc.get(1), loc.get(2))));
+                if (!methodLookUp.get(key).containsKey(loc.get(0))){
+                    methodLookUp.get(key).put(loc.get(0), new ArrayList<>());
+                }
+                methodLookUp.get(key).get(loc.get(0)).add(new ArrayList<>(Arrays.asList(loc.get(1), loc.get(2))));
             }
         }
 
+        // Clean out fully-overlapped in editGroups
         for (int i = 0; i < editGroupList.size(); i++){
             List<Integer> editGroup = editGroupList.get(i);
             for (int j = 0; j < editGroupList.size(); j++){
                 List<Integer> otherGroup = editGroupList.get(j);
                 if (editGroup.size() < otherGroup.size() && Collections.indexOfSubList(otherGroup, editGroup) != -1){
-                    for (otherGroup.get()){
-
+                    HashMap<Integer, List<List<Integer>>> cur_locs = methodLookUp.get(editGroup);
+                    HashMap<Integer, List<List<Integer>>> other_locs = methodLookUp.get(otherGroup);
+                    Set<Integer> cur_loc_method = new HashSet<>(cur_locs.keySet());
+                    cur_loc_method.retainAll(other_locs.keySet());
+                    if (!cur_loc_method.isEmpty()){
+                        for (Integer method_id : cur_loc_method){
+                            List<List<Integer>> cur_intervals = cur_locs.get(method_id);
+                            List<List<Integer>> other_intervals = other_locs.get(method_id);
+                            for (List<Integer> cur_interval : cur_intervals){
+                                for (List<Integer> other_interval : other_intervals){
+                                    Integer cur_start = cur_interval.get(0);
+                                    Integer cur_end = cur_interval.get(1);
+                                    Integer other_start = other_interval.get(0);
+                                    Integer other_end = other_interval.get(1);
+                                    if(cur_start >= other_start && cur_end <= other_end){
+                                        init_results.get(editGroup).remove(Arrays.asList(method_id, cur_start, cur_end));
+                                    }
+                                }
+                            }
+                        }
+                        if (init_results.get(editGroup).isEmpty()){
+                            init_results.remove(editGroup);
+                        }
                     }
                 }
             }
         }
+
+        final ArrayList<List<Integer>> newEditGroupList = new ArrayList<>(init_results.keySet());
+        if (singleLineFiltering){
+            for (List<Integer> editGroup : newEditGroupList){
+                if (editGroup.size() < 2){
+                    init_results.remove(editGroup);
+                }
+            }
+        }
+
+        /**
+         * // remove single edit location groups
+        for (List<Integer> editGroup : init_results.keySet()){
+            if (init_results.get(editGroup).size() < 2){
+                init_results.remove(editGroup);
+            }
+        }*/
     }
 
 }

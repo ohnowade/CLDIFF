@@ -26,7 +26,8 @@ public class GroupMain {
         List<List<Integer>> testLinkGroups = Arrays.asList(M1,M2,M3, M4);
 
         GroupLinkedDiffs linkedDiffGrouper = new GroupLinkedDiffs(testLinkGroups);
-        HashMap<List<Integer>, Set<List<Integer>>> linkedStmt2Group = linkedDiffGrouper.getLinkedStmtGroups();
+        HashMap<List<Integer>, Set<List<Integer>>> linkedStmt2Group = linkedDiffGrouper.getLinkedStmtGroups(true
+        );
 
     }
 }

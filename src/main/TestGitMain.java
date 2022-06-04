@@ -5,21 +5,35 @@ import edu.ucla.se.GitHandler;
 import edu.ucla.se.P_LANG;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TestGitMain {
     public static void main(String[] args) {
+        String newPath = "../DataSet/Patch1/NEW_JDT9801";
+        String oldPath = "../DataSet/Patch1/OLD_JDT9800";
+        String repoName = "testpatch1";
         GitCreator gitCreator = new GitCreator();
-        gitCreator.createNewRepo("xv6");
-        String commitId = gitCreator.commitFilesToRepo("xv6", "D:\\Study\\CS 537\\p2b\\xv6-sp20");
-        if (commitId == null) {
-            System.out.println("Commit Failed!");
-            System.exit(1);
-        }
-        GitHandler gitHandler = new GitHandler(
-                Paths.get("D:\\Study\\CS 230\\final project\\CLDiff\\repos\\xv6\\.git").toString(),
-                commitId, P_LANG.C);
-        List<String> allFiles = gitHandler.getFiles();
-        for (String file : allFiles) System.out.println(file);
+        gitCreator.deleteRepo(repoName);
+        gitCreator.createNewRepo(repoName);
+        gitCreator.commitFilesToRepo(repoName, oldPath);
+        String commitId = gitCreator.commitFilesToRepo(repoName, newPath);
+        GitHandler gitHandler = new GitHandler(gitCreator.getRepo(repoName), repoName, commitId, P_LANG.JAVA);
+
+        String filePath = "dom/org/eclipse/jdt/core/dom/DefaultCommentMapper.java";
+
+        Map<String, List<List<Integer>>> linesPerFile = new HashMap<>();
+        linesPerFile.put(filePath, new ArrayList<>());
+        List<Integer> curGroup = new ArrayList<>();
+        curGroup.add(204);
+        curGroup.add(241);
+        curGroup.add(254);
+        linesPerFile.get(filePath).add(curGroup);
+
+
+        Map<String, Map<Integer, String>> lineContent = gitHandler.getOldFileContentByLine(linesPerFile);
+        System.out.println(lineContent);
     }
 }

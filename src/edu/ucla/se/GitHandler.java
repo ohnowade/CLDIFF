@@ -78,7 +78,7 @@ public class GitHandler {
                 treeWalk.addTree(tree);
                 treeWalk.setRecursive(true);
                 while (treeWalk.next()) {
-                    String filePath = treeWalk.getNameString();
+                    String filePath = treeWalk.getPathString();
                     int dotIdx = filePath.lastIndexOf(".");
                     if (dotIdx > 0 && filePath.substring(dotIdx + 1).equals(fileExtension))
                         allSrcFiles.add(filePath);
@@ -104,6 +104,7 @@ public class GitHandler {
             List<List<Integer>> curGroupedLines = entry.getValue();
             List<Integer> curAllLines = new ArrayList<>();
             for (List<Integer> curGroupLine : curGroupedLines) curAllLines.addAll(curGroupLine);
+            Collections.sort(curAllLines);
             allLines.put(entry.getKey(), curAllLines);
         }
 
@@ -249,7 +250,7 @@ public class GitHandler {
      * @param in the file input stream
      * @return the map of line number to content
      */
-    private Map<Integer, String> getLineContentMap(List<Integer> lines, InputStream in) {
+    public Map<Integer, String> getLineContentMap(List<Integer> lines, InputStream in) {
         Map<Integer, String> lcMap = new HashMap<>();
         InputStreamReader reader = new InputStreamReader(in);
         BufferedReader br = new BufferedReader(reader);
@@ -289,9 +290,10 @@ public class GitHandler {
 
         for (int groupId = 0; groupId < regex.size(); groupId++) {
             String r = regex.get(groupId);
+            if (r == null) continue;
 
             System.out.printf("Matching regex %s of group %d\n", r, groupId);
-            java.util.regex.Pattern curPattern = Pattern.compile(r);
+            Pattern curPattern = Pattern.compile(r);
             RevTree tree = curCommit.getTree();
             TreeWalk treeWalk = new TreeWalk(repository);
             treeWalk.addTree(tree);

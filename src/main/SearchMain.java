@@ -1,10 +1,12 @@
 package main;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.*;
 
 import edu.ucla.se.*;
+import edu.ucla.se.utils.Config;
 import edu.ucla.se.utils.ParserHelper;
 
 import java.nio.file.Paths;
@@ -18,6 +20,10 @@ public class SearchMain {
 
         String oldPath = "./DataSet/Patch1/OLD_JDT9800";
         String newPath = "./DataSet/Patch1/NEW_JDT9801";
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5ae65095c45c971c8d9e6024e603084e621156b3
 
         // Get all changed old file names
         // TOOD
@@ -48,7 +54,9 @@ public class SearchMain {
 //        curGroup.put("A.java", curFile);
 //        groups.put(0, curGroup);
 
-        SearchEngine searchEngine = new SearchEngine(oldPath, newPath, "testpatch1", P_LANG.JAVA);
+        //SearchEngine searchEngine = new SearchEngine(oldPath, newPath, "testpatch1", P_LANG.JAVA);
+        SearchEngine searchEngine = new SearchEngine(Paths.get(Config.REPO_PATH, "testpatch1", ".git").toString(),
+                "72d829fcf8da4f44a0ed251056c3cf0fe5f3ef65", P_LANG.JAVA);
         searchEngine.run();
     }
 }

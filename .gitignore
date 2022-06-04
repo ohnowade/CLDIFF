@@ -1,8 +1,3 @@
-/bin/
-/target/
-/resource/config.properties
-/.idea/
-/.vscode/
 repos/*
 repos/testpatch1/
 *.iml
@@ -11,3 +6,10 @@ src/test/
 *.ipynb*
 Dataset/
 output/
+.DS_Store/
+/bin/
+/target/
+/resource/config.properties
+/.idea/
+/.vscode/
+

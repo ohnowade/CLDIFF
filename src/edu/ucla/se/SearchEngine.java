@@ -17,11 +17,16 @@ public class SearchEngine {
     private GitHandler gitHandler;
 
     public SearchEngine(String repoPath, String commitId, P_LANG lang) {
-        this.repoPath = repoPath.substring(0, repoPath.length() - 5);
+        this.repoPath = repoPath;
+        String tempPath = repoPath.replace("\\", "/");
+        String[] splitPath = tempPath.split(("/"));
+        this.repoName = splitPath[splitPath.length - 2];
+        this.commitId = commitId;
         this.gitHandler = new GitHandler(repoPath, commitId, lang);
     }
 
     public SearchEngine(String oldPath, String newPath, String repoName, P_LANG lang) {
+        repoName = repoName.toLowerCase(Locale.ROOT);
         oldPath = Paths.get(oldPath).toString();
         newPath = Paths.get(newPath).toString();
         GitCreator gitCreator = new GitCreator();
@@ -45,7 +50,7 @@ public class SearchEngine {
             //=============================== RUN CLDIFF =========================================
             System.out.println("=========================== Start Running CLDiff ==============================");
             CLDiffLocal clDiffLocal = new CLDiffLocal();
-            clDiffLocal.run(commitId, Paths.get(repoPath, ".git").toString(), Config.CLDIFF_OUTPUT_PATH);
+            clDiffLocal.run(commitId, repoPath, Config.CLDIFF_OUTPUT_PATH);
             System.out.println();
 
             //========================== STEP 1: GET GROUPING INFO ===============================

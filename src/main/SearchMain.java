@@ -1,10 +1,11 @@
 package main;
 
-import java.io.IOException;
+import java.io.*;
 import java.text.ParseException;
 import java.util.*;
 
 import edu.ucla.se.*;
+import edu.ucla.se.utils.Config;
 import edu.ucla.se.utils.ParserHelper;
 
 import java.nio.file.Paths;
@@ -14,8 +15,8 @@ public class SearchMain {
     public static void main(String[] args) throws IOException, ParseException, org.json.simple.parser.ParseException {
         System.out.println("Start running search...");
 
-        String oldPath = "./DataSet/testPatch1/old";
-        String newPath = "./DataSet/testPatch1/new";
+        String oldPath = "../DataSet/Patch1/OLD_JDT9800";
+        String newPath = "../DataSet/Patch1/NEW_JDT9801";
 //=======
 //        String oldPath = "../DataSet/Patch1/NEW_JDT9801";
 //        String newPath = "../DataSet/Patch1/OLD_JDT9800";

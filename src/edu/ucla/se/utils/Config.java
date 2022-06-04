@@ -7,5 +7,13 @@ public class Config {
 
     public final static String CLDIFF_OUTPUT_PATH = Paths.get("./output").toString();
 
+    public final static double SIM_SCORE_THRESH = 0.79;
 
+    public final static double MIN_SUP_RATIO = 0.8;
+
+    public final static double MATCH_SCORE = 0.9;
+
+    public final static double MATCH_PATTERN_RATIO = 0.3;
+
+    public final static boolean OUTPUT_TO_FILE = true;
 }

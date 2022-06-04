@@ -1,5 +1,7 @@
 package edu.ucla.se;
 
+import edu.ucla.se.utils.Config;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,20 +59,15 @@ public class LCSMatcher {
         ScoreComputer sc = new LCSScoreComputer();
         PEAM peam = new PEAM(sc);
 
-        double sim_score_thres = 0.79;
-        double min_sup_ratio = 0.8;
-        double match_score = 0.8;
-        double match_pattern_ratio = 0.3;
-
         System.out.println("Start Finding Patterns...");
-        peam.FindFrequentPattern(oldContentsCode, sim_score_thres, min_sup_ratio);
+        peam.FindFrequentPattern(oldContentsCode, Config.SIM_SCORE_THRESH, Config.MIN_SUP_RATIO);
         peam.PrintPatterns();
         System.out.println("Done");
 
         int pattern_cnt = peam.GetPatternCnt();
 
         return gitHandler.matchLCS(peam,4,
-                                   (int) Math.max((pattern_cnt*match_pattern_ratio),1),
-                                   (int) Math.max((pattern_cnt*match_pattern_ratio),1), match_score);
+                                   (int) Math.max((pattern_cnt*Config.MATCH_PATTERN_RATIO),1),
+                                   (int) Math.max((pattern_cnt*Config.MATCH_PATTERN_RATIO),1), Config.MATCH_SCORE);
     }
 }

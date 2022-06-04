@@ -280,47 +280,49 @@ public class GitHandler {
 
     /**
      * Match regex to all source files in current commit
-     * @param regex the list of regex to be matched
+     * @param groupedRegex the map from group number to a list of regex to be matched
      * @return the map from file name to all possible missing change it contains
      * @throws IOException
      */
-    public Map<String, Map<Integer, List<MissingChangeInfo>>> matchRegex(List<String> regex) throws IOException {
+    public Map<String, Map<Integer, List<MissingChangeInfo>>> matchRegex(Map<Integer, List<String>> groupedRegex) throws IOException {
         Map<String, Map<Integer, List<MissingChangeInfo>>> rs = new HashMap<>();
 
-        for (int groupId = 0; groupId < regex.size(); groupId++) {
-            String r = regex.get(groupId);
+        for (Map.Entry<Integer, List<String>> entry : groupedRegex.entrySet()) {
+            int groupId = entry.getKey();
+            List<String> regex = entry.getValue();
+            for (String r : regex) {
+                System.out.printf("Matching regex %s of group %d\n", r, groupId);
+                java.util.regex.Pattern curPattern = Pattern.compile(r);
+                RevTree tree = curCommit.getTree();
+                TreeWalk treeWalk = new TreeWalk(repository);
+                treeWalk.addTree(tree);
+                treeWalk.setRecursive(true);
 
-            System.out.printf("Matching regex %s of group %d\n", r, groupId);
-            java.util.regex.Pattern curPattern = Pattern.compile(r);
-            RevTree tree = curCommit.getTree();
-            TreeWalk treeWalk = new TreeWalk(repository);
-            treeWalk.addTree(tree);
-            treeWalk.setRecursive(true);
+                while (treeWalk.next()) {
+                    String curFileName = treeWalk.getNameString();
+                    int dotIdx = curFileName.lastIndexOf(".");
+                    if (dotIdx < 0 || !curFileName.substring(dotIdx + 1).equals(lang.getExtension())) continue;
 
-            while (treeWalk.next()) {
-                String curFileName = treeWalk.getNameString();
-                int dotIdx = curFileName.lastIndexOf(".");
-                if (dotIdx < 0 || !curFileName.substring(dotIdx + 1).equals(lang.getExtension())) continue;
-
-                try {
-                    ObjectId curEntryId = treeWalk.getObjectId(0);
-                    ObjectReader objectReader = repository.newObjectReader();
-                    ObjectLoader objectLoader = objectReader.open(curEntryId);
-                    InputStream in = objectLoader.openStream();
-                    List<Line> curAllLines = new ArrayList<>();
-                    String contents = getFileContentWithLines(curAllLines, in);
-                    Matcher curMatcher = curPattern.matcher(contents);
-                    while (curMatcher.find()) {
-                        int startIdx = curMatcher.start();
-                        int endIdx = curMatcher.end() - 1;
-                        int startLine = getLineNumber(startIdx, curAllLines);
-                        int endLine = getLineNumber(endIdx, curAllLines);
-                        rs.computeIfAbsent(treeWalk.getPathString(), k -> new HashMap<>())
-                                .computeIfAbsent(groupId, k -> new ArrayList<>())
-                                .add(new MissingChangeInfo(startLine, endLine));
+                    try {
+                        ObjectId curEntryId = treeWalk.getObjectId(0);
+                        ObjectReader objectReader = repository.newObjectReader();
+                        ObjectLoader objectLoader = objectReader.open(curEntryId);
+                        InputStream in = objectLoader.openStream();
+                        List<Line> curAllLines = new ArrayList<>();
+                        String contents = getFileContentWithLines(curAllLines, in);
+                        Matcher curMatcher = curPattern.matcher(contents);
+                        while (curMatcher.find()) {
+                            int startIdx = curMatcher.start();
+                            int endIdx = curMatcher.end() - 1;
+                            int startLine = getLineNumber(startIdx, curAllLines);
+                            int endLine = getLineNumber(endIdx, curAllLines);
+                            rs.computeIfAbsent(treeWalk.getPathString(), k -> new HashMap<>())
+                                    .computeIfAbsent(groupId, k -> new ArrayList<>())
+                                    .add(new MissingChangeInfo(startLine, endLine));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
         }

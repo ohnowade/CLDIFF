@@ -277,10 +277,10 @@ public class RegexGenerator {
         return regexSet;
     }
 
-    public HashMap<Integer,ArrayList<String>> generateRegex(){
+    public Map<Integer,List<String>> generateRegex(){
         HashMap<Integer,ArrayList<String>> codeSnippet = getCodeSnippet();
         System.out.println(codeSnippet);
-        HashMap<Integer,ArrayList<String>> ret = new HashMap<>();
+        Map<Integer,List<String>> ret = new HashMap<>();
 
         for (Integer g: codeSnippet.keySet()){
             ArrayList<String> codes = codeSnippet.get(g);

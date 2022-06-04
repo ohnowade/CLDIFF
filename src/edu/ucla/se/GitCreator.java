@@ -24,7 +24,7 @@ public class GitCreator {
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
         try {
             for (String repoName : repoDir.list()) {
-                String curRepoPath = Paths.get(Config.REPO_PATH, repoName, ".git").toString();
+                String curRepoPath = Paths.get(Config.REPO_PATH, repoName, "\\.git").toString();
                 Repository curRepo = builder.setGitDir(new File(curRepoPath)).readEnvironment().findGitDir().build();
                 repos.put(repoName, curRepo);
             }
@@ -117,7 +117,7 @@ public class GitCreator {
             return null;
         }
 
-        return Paths.get(Config.REPO_PATH, repoName, ".git").toString();
+        return Paths.get(Config.REPO_PATH, repoName).toString();
     }
 
 

@@ -241,18 +241,28 @@ public class RegexGenerator {
         double threshold = 1;
         double currentMax = Double.POSITIVE_INFINITY;
         ArrayList<ArrayList<String>> maximum = new ArrayList<>();
-        for (ArrayList<String> based: tokens){
+//        for (ArrayList<String> based: tokens){
+        for (int i = 0; i < tokens.size(); i++){
+            ArrayList<String> based = tokens.get(i);
 //            System.out.printf("Current base: %s\n", based);
             ArrayList<String> previous = (ArrayList<String>) based.clone();
             ArrayList<String> temp = (ArrayList<String>) based.clone();
-            for (ArrayList<String> other: tokens){
+            Boolean updated = false;
+//            for (ArrayList<String> other: tokens){
+            for (int j = 0; j < tokens.size(); j++){
+                if (i == j) continue;
+                ArrayList<String> other = tokens.get(j);
                 temp.retainAll(other);
 //                System.out.printf("Current temp: %s\n", temp);
-                if (temp.size() < based.size() * threshold){
+                if (temp.size() < based.size() * threshold){        // Rollback
                     temp = (ArrayList<String>)previous.clone();
-                }else{
+                }else{                                              // Update
+                    updated = true;
                     previous = (ArrayList<String>)temp.clone();
                 }
+            }
+            if (!updated){
+                continue;
             }
             if (previous.size() == currentMax){
 //                System.out.printf("Final output for one base: %s\n", previous);
@@ -285,6 +295,9 @@ public class RegexGenerator {
         for (Integer g: codeSnippet.keySet()){
             ArrayList<String> codes = codeSnippet.get(g);
             ArrayList<String> patternSet = findRegex(codes);
+            if (patternSet.size() == 0){
+                continue;
+            }
             ArrayList<String> regexSet = new ArrayList<>();
             for (String pattern : patternSet){
                 pattern = pattern.replaceAll("\\[", "\\\\[");

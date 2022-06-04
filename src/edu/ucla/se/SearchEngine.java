@@ -50,7 +50,8 @@ public class SearchEngine {
 
             //========================== STEP 1: GET GROUPING INFO ===============================
             System.out.println("========================== Getting Grouping Info ===============================");
-            HashMap<Integer, HashMap<String, List<List<Integer>>>> groups = ParserHelper.getChangeGroups(repoName, commitId, "1");
+            HashMap<Integer, HashMap<String, List<List<Integer>>>> groups = ParserHelper.getChangeGroups(
+                    repoName, commitId, repoName.substring(repoName.length() - 1));
             System.out.println();
 
             //============== STEP 2.1: GENERATE REGEX AND MATCH IN CURRENT COMMIT ================

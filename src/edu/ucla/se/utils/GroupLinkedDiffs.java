@@ -160,10 +160,10 @@ public class GroupLinkedDiffs {
 
                     List<Integer> editList = this.getLinkSetAt(method_loc, init_loc, cur_loc);
 
-                    boolean visited_position = false;
+                    boolean visited_position = true;
                     for (int k = init_loc; k < cur_loc; k++){
-                        if (visitedLocs.contains(new Pair<>(method_loc, k))){
-                            visited_position = true;
+                        if (!visitedLocs.contains(new Pair<>(method_loc, k))){
+                            visited_position = false;
                         }
                     }
                     if (visited_position) {
@@ -248,6 +248,32 @@ public class GroupLinkedDiffs {
         System.out.println(resultEditGroups);
         return resultEditGroups;
 
+    }
+
+    public HashMap<List<Integer>, Set<List<Integer>>> filterOverlaps(
+            HashMap<List<Integer>, Set<List<Integer>>> init_results){
+        ArrayList<List<Integer>> editGroupList = new ArrayList<>(init_results.keySet());
+
+        HashMap<List<Integer>, HashMap<Integer, List<Integer>>> methodLookUp = new HashMap<>();
+        for (List<Integer> key : init_results.keySet()){
+            Set<List<Integer>> locSet = init_results.get(key);
+            methodLookUp.put(key, new HashMap<>());
+            for ( List<Integer> loc : locSet){
+                methodLookUp.get(key).put(loc.get(0), new ArrayList<>(Arrays.asList(loc.get(1), loc.get(2))));
+            }
+        }
+
+        for (int i = 0; i < editGroupList.size(); i++){
+            List<Integer> editGroup = editGroupList.get(i);
+            for (int j = 0; j < editGroupList.size(); j++){
+                List<Integer> otherGroup = editGroupList.get(j);
+                if (editGroup.size() < otherGroup.size() && Collections.indexOfSubList(otherGroup, editGroup) != -1){
+                    for (otherGroup.get()){
+
+                    }
+                }
+            }
+        }
     }
 
 }

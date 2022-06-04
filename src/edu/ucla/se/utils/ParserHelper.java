@@ -257,8 +257,8 @@ public class ParserHelper {
          3. [0, 2]
          */
 
-        boolean flag = false;
-        if (flag) {
+        boolean highLevelGroupingFLAG = false;
+        if (highLevelGroupingFLAG) {
             GroupLinkedDiffs linkedDiffGrouper = new GroupLinkedDiffs(changeLinksDisjointSetId);
             HashMap<List<Integer>, Set<List<Integer>>> linkToHigerLevel = linkedDiffGrouper.getLinkedStmtGroups();
 

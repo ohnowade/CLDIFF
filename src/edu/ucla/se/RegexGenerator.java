@@ -277,14 +277,15 @@ public class RegexGenerator {
         return regexSet;
     }
 
-    public ArrayList<String> generateRegex(){
+    public HashMap<Integer,ArrayList<String>> generateRegex(){
         HashMap<Integer,ArrayList<String>> codeSnippet = getCodeSnippet();
         System.out.println(codeSnippet);
-        ArrayList<String> ret = new ArrayList<>();
+        HashMap<Integer,ArrayList<String>> ret = new HashMap<>();
 
         for (Integer g: codeSnippet.keySet()){
             ArrayList<String> codes = codeSnippet.get(g);
             ArrayList<String> patternSet = findRegex(codes);
+            ArrayList<String> regexSet = new ArrayList<>();
             for (String pattern : patternSet){
                 pattern = pattern.replaceAll("\\[", "\\\\[");
                 pattern = pattern.replaceAll("\\]", "\\\\]");
@@ -292,13 +293,13 @@ public class RegexGenerator {
                 String _check = pattern.replaceAll("\\.\\*","");
                 String _check2 = pattern.replaceAll("\\w", "");
                 if (_check.length() != 0 && _check2.length() != pattern.length()){
-                    ret.add(pattern);
+                    regexSet.add(pattern);
                 }else{
-                    ret.add(null);
+                    regexSet.add(null);
                 }
             }
+            ret.put(g, regexSet);
         }
-
         return ret;
     }
 

@@ -15,13 +15,15 @@ public class SearchEngine {
     private String commitId;
 
     private GitHandler gitHandler;
+    private boolean highlevelGroupFLAG;
 
-    public SearchEngine(String repoPath, String commitId, P_LANG lang) {
+    public SearchEngine(String repoPath, String commitId, P_LANG lang, boolean highlevelGroupFLAG) {
         this.repoPath = repoPath.substring(0, repoPath.length() - 5);
         this.gitHandler = new GitHandler(repoPath, commitId, lang);
+        this.highlevelGroupFLAG = highlevelGroupFLAG;
     }
 
-    public SearchEngine(String oldPath, String newPath, String repoName, P_LANG lang) {
+    public SearchEngine(String oldPath, String newPath, String repoName, P_LANG lang, boolean highlevelGroupFLAG) {
         oldPath = Paths.get(oldPath).toString();
         newPath = Paths.get(newPath).toString();
         GitCreator gitCreator = new GitCreator();
@@ -33,6 +35,7 @@ public class SearchEngine {
         this.repoName = repoName;
         this.commitId = commitId;
         this.gitHandler = new GitHandler(gitCreator.getRepo(repoName), repoName, commitId, lang);
+        this.highlevelGroupFLAG = highlevelGroupFLAG;
     }
 
     public void run() {
@@ -51,7 +54,7 @@ public class SearchEngine {
             //========================== STEP 1: GET GROUPING INFO ===============================
             System.out.println("========================== Getting Grouping Info ===============================");
             HashMap<Integer, HashMap<String, List<List<Integer>>>> groups = ParserHelper.getChangeGroups(
-                    repoName, commitId, repoName.substring(repoName.length() - 1));
+                    repoName, commitId, this.highlevelGroupFLAG);
             System.out.println();
 
             //============== STEP 2.1: GENERATE REGEX AND MATCH IN CURRENT COMMIT ================

@@ -122,6 +122,14 @@ public class FileOutputLog {
         FileWriter.writeInAll(path, link);
     }
 
+    public void writeGroupingTxt(String fileName, String grouping){
+        //String path = this.metaLinkPath+"/grouping.txt";
+        String path = String.format("%s/grouping_%s.txt", this.metaLinkPath, fileName);
+        System.out.println(path);
+//        Global.outputFilePathList.add(path);
+        FileWriter.writeInAll(path, grouping);
+    }
+
 
 
 }

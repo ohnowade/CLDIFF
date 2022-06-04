@@ -35,7 +35,7 @@ public class ChangeEntityPreprocess {
     public ChangeEntityData ced;
 
 
-    public void preprocessChangeEntity() {
+    public String preprocessChangeEntity() {
         this.initContainerEntityData();
         if(Global.RQ2==0) {
 //            this.printContainerEntityDataBefore();
@@ -45,8 +45,9 @@ public class ChangeEntityPreprocess {
         this.setChangeEntityOpt2Opt2Exp();
 //        this.printContainerEntityDataAfter();
         if(Global.RQ2==0) {
-            this.printNaturalEntityDesc();
+            return this.printNaturalEntityDesc();
         }
+        return "";
     }
 
 
@@ -228,8 +229,8 @@ public class ChangeEntityPreprocess {
     public void printContainerEntityDataAfter(){
         ChangeEntityPrinter.printContainerEntity(ced.entityContainer, ced.mad.preprocessedData.srcCu);
     }
-    public void printNaturalEntityDesc(){
-        ChangeEntityPrinter.printContainerEntityNatural(ced.entityContainer, ced.mad.preprocessedData.srcCu);
+    public String printNaturalEntityDesc(){
+        return ChangeEntityPrinter.printContainerEntityNatural(ced.entityContainer, ced.mad.preprocessedData.srcCu);
     }
 
     public void setChangeEntitySub(){

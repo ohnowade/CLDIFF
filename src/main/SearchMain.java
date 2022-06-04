@@ -15,7 +15,8 @@ public class SearchMain {
     public static void main(String[] args) throws IOException, ParseException, org.json.simple.parser.ParseException {
         System.out.println("Start running search...");
 
-        int patchNumber = 2; // you only need to edit patch number here
+        int patchNumber = 1; // you only need to edit patch number here
+        boolean highlevelGroupFLAG = false;
 
         String oldPath = String.format("./DataSet/testPatch%d/old", patchNumber);
         String newPath = String.format("./DataSet/testPatch%d/new", patchNumber);
@@ -55,7 +56,7 @@ public class SearchMain {
 //        groups.put(0, curGroup);
 
         String repoName = String.format("testpatch%d", patchNumber);
-        SearchEngine searchEngine = new SearchEngine(oldPath, newPath, repoName, P_LANG.JAVA);
+        SearchEngine searchEngine = new SearchEngine(oldPath, newPath, repoName, P_LANG.JAVA, highlevelGroupFLAG);
 
 //        SearchEngine searchEngine = new SearchEngine(Paths.get(Config.REPO_PATH, "testpatch1", ".git").toString(),
 //                "72d829fcf8da4f44a0ed251056c3cf0fe5f3ef65", P_LANG.JAVA);

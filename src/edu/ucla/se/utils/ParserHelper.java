@@ -224,19 +224,27 @@ public class ParserHelper {
         return result;
     }
 
-    public static HashMap<Integer, List<List<Integer>>> parseSingleFile(String commitId, String parsedName, String repoName, String testPatch) throws IOException, ParseException, org.json.simple.parser.ParseException {
+    public static HashMap<Integer, List<List<Integer>>> parseSingleFile(String commitId, String parsedName,
+                                                                        String repoName, boolean highLevelGroupingFLAG)
+            throws IOException, ParseException, org.json.simple.parser.ParseException {
         System.out.println("start parse");
         String linkFileName = Paths.get(Config.CLDIFF_OUTPUT_PATH, repoName, commitId, "link.json").toString();
-        String groupingFileName = "./src/edu/ucla/se/utils/grouping_testpatch" + testPatch +".txt";
+        //String groupingFileName = "./src/edu/ucla/se/utils/grouping_testpatch" + testPatch +".txt";
         // For example sourceCodeFile = xxx.java
         String[] sourceCodePath = parsedName.split("/");
         String sourceCodeFile = sourceCodePath[sourceCodePath.length - 1];
+
+        String groupingFilename = String.format("grouping_%s.txt", sourceCodeFile);
+        String groupingFilePath = Paths.get(Config.CLDIFF_OUTPUT_PATH, repoName, commitId,
+                groupingFilename).toString();
+        System.out.println("grouping.txt file path:" + groupingFilePath);
+
         ParserHelper ph = new ParserHelper();
         // Parse json file and generate unionfind/disjoint set
         ph.parseLinkJson(linkFileName);
         // Step1. parse function and generate function groups
 
-        List<List<Integer>> changeLinksDisjointSetId = ph.parseDiffFile(groupingFileName, sourceCodeFile);
+        List<List<Integer>> changeLinksDisjointSetId = ph.parseDiffFile(groupingFilePath, sourceCodeFile);
 
         /**
          *
@@ -257,7 +265,6 @@ public class ParserHelper {
          3. [0, 2]
          */
 
-        boolean highLevelGroupingFLAG = true;
         if (highLevelGroupingFLAG) {
             boolean singleLineFilterFLAG = true;
             GroupLinkedDiffs linkedDiffGrouper = new GroupLinkedDiffs(changeLinksDisjointSetId);
@@ -292,13 +299,15 @@ public class ParserHelper {
      * @throws ParseException
      * @throws org.json.simple.parser.ParseException
      */
-    public static HashMap<Integer, HashMap<String, List<List<Integer>>>> getChangeGroups (String repoName, String commitId, String testPatch)
+    public static HashMap<Integer, HashMap<String, List<List<Integer>>>> getChangeGroups (String repoName,
+                                                                                          String commitId,
+                                                                                          boolean highlevelGroupFLAG)
             throws IOException, ParseException, org.json.simple.parser.ParseException {
         List<String> listOfChangedFileNames = parseMetaJson(repoName, commitId);
         System.out.println("All file names: " + listOfChangedFileNames);
         HashMap<String, HashMap<Integer, List<List<Integer>>>> systematicChangeGroup = new HashMap<>();
         for (String file : listOfChangedFileNames) {
-            HashMap<Integer, List<List<Integer>>> tempMap = parseSingleFile(commitId, file, repoName, testPatch);
+            HashMap<Integer, List<List<Integer>>> tempMap = parseSingleFile(commitId, file, repoName, highlevelGroupFLAG);
             boolean isBreak = false;
             for (Integer i : tempMap.keySet()) {
                 if (tempMap.get(i).size() == 0 || tempMap.get(i).get(0).size() == 0) {

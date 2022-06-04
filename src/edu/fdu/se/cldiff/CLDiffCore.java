@@ -118,7 +118,10 @@ public class CLDiffCore {
 //correcting
         ChangeEntityData ced = new ChangeEntityData(mad);
         ChangeEntityPreprocess cep = new ChangeEntityPreprocess(ced);
-        cep.preprocessChangeEntity();//1.init 2.merge 3.set 4.sub
+        // get entity --> grouping output here
+        String groupingTxt = cep.preprocessChangeEntity();//1.init 2.merge 3.set 4.sub
+        mFileOutputLog.writeGroupingTxt(fileName, groupingTxt);
+
         changeEntityData = ced;
         changeEntityData.fileName = fileName;
         long end2 = System.nanoTime();

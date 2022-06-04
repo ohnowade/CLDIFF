@@ -354,7 +354,7 @@ public class GitHandler {
             int dotIdx = curPathName.lastIndexOf(".");
             if (dotIdx < 0 || !curPathName.substring(dotIdx + 1).equals(lang.getExtension())) continue;
             Path curFilePath = Paths.get(repoPath, curPathName);
-            rs.putAll(peam.FindMatch(curFilePath, max_interval, min_stmt_cnt, min_hit_patterns, match_score));
+            rs.put(curPathName, peam.FindMatch(curFilePath, max_interval, min_stmt_cnt, min_hit_patterns, match_score));
         }
 
         return rs;

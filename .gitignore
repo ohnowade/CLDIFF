@@ -4,7 +4,6 @@ repos/testpatch1/
 resource/test/
 src/test/
 *.ipynb*
-Dataset/
 output/
 .DS_Store/
 /bin/

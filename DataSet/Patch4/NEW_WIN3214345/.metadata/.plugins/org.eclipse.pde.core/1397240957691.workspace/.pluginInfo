@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map>
+	<bundle bundleID="691" hasExtensibleAPI="true" localization="plugin" name="%pluginName" project="OLD_WIN3214344" provider="%providerName"/>
+	<bundle bundleID="689" hasExtensibleAPI="true" localization="plugin" name="%pluginName" project="OLD_CARBON14346" provider="%providerName"/>
+	<bundle bundleID="688" hasExtensibleAPI="true" localization="plugin" name="%pluginName" project="OLD_CARBON14344" provider="%providerName"/>
+	<bundle bundleID="690" hasExtensibleAPI="true" localization="plugin" name="%pluginName" project="OLD_GTK14344" provider="%providerName"/>
+	<bundle bundleID="685" hasExtensibleAPI="true" localization="plugin" name="%pluginName" project="NEW_GTK14345" provider="%providerName"/>
+	<bundle bundleID="686" hasExtensibleAPI="true" localization="plugin" name="%pluginName" project="NEW_CARBON14347" provider="%providerName"/>
+	<bundle bundleID="687" hasExtensibleAPI="true" localization="plugin" name="%pluginName" project="NEW_CARBON14345" provider="%providerName"/>
+</map>

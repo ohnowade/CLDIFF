@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.*;
@@ -109,8 +110,9 @@ public class ParserHelper {
                 List<String> list = Arrays.asList(data.split(" "));
                 if (list.size() == 1) {
                     // finish reading a component
-                    if (dirty) {
+                    if (dirty && !currComponent.functionName.equals(sourceFileName.substring(0, sourceFileName.length()-1)) && currComponent.changeIndex.size()!=0) {
                         currComponent.calculateRoots();
+                        currComponent.calulateChangeScopeList();
                         listOfComponent.add(currComponent);
                     }
                     flag = false;
@@ -134,18 +136,34 @@ public class ParserHelper {
                 }
 
                 if (flag ) {
+                    if (list.get(1).equals("Insert") || list.get(1).contains("add")) {
+                        continue;
+                    }
+                    data = list.get(list.size() - 1);
+                    data = data.substring(1, data.length()-1);
+                    String[] replaceSpace = data.split(",");
+                    if (list.get(2).equals("If")) {
+                        currComponent.addLineScope(replaceSpace[0], replaceSpace[0]);
+                    }
+                    else {
+                        currComponent.addLineScope(replaceSpace[0], replaceSpace[1]);
+                    }
+
+
                     int idx = Integer.parseInt(list.get(0).
                                 substring(0, list.get(0).length() - 1));
                     if (uf.father.containsKey(idx)) {
                         currComponent.addChangeIndex(idx);
+
                         currComponent.lineNumbers.add(lineNumberHelper(list.get(list.size() - 1)));
                     }
 
                 }
             }
 
-            if (dirty) {
+            if (dirty && currComponent.changeIndex.size() != 0) {
                 currComponent.calculateRoots();
+                currComponent.calulateChangeScopeList();
                 listOfComponent.add(currComponent);
             }
 
@@ -206,10 +224,10 @@ public class ParserHelper {
         return result;
     }
 
-    public static HashMap<Integer, List<List<Integer>>> parseSingleFile(String commitId, String parsedName, String repoName) throws IOException, ParseException, org.json.simple.parser.ParseException {
+    public static HashMap<Integer, List<List<Integer>>> parseSingleFile(String commitId, String parsedName, String repoName, String testPatch) throws IOException, ParseException, org.json.simple.parser.ParseException {
         System.out.println("start parse");
         String linkFileName = Paths.get(Config.CLDIFF_OUTPUT_PATH, repoName, commitId, "link.json").toString();
-        String groupingFileName = "./src/edu/ucla/se/utils/grouping_testpatch1.txt";
+        String groupingFileName = "./src/edu/ucla/se/utils/grouping_testpatch" + testPatch +".txt";
         // For example sourceCodeFile = xxx.java
         String[] sourceCodePath = parsedName.split("/");
         String sourceCodeFile = sourceCodePath[sourceCodePath.length - 1];
@@ -239,14 +257,27 @@ public class ParserHelper {
          3. [0, 2]
          */
 
+        boolean flag = false;
+        if (flag) {
+            GroupLinkedDiffs linkedDiffGrouper = new GroupLinkedDiffs(changeLinksDisjointSetId);
+            HashMap<List<Integer>, Set<List<Integer>>> linkToHigerLevel = linkedDiffGrouper.getLinkedStmtGroups();
 
-        GroupLinkedDiffs linkedDiffGrouper = new GroupLinkedDiffs(changeLinksDisjointSetId);
-        HashMap<List<Integer>, Set<List<Integer>>> linkToHigerLevel = linkedDiffGrouper.getLinkedStmtGroups();
+            //
 
-        //
-        HashMap<Integer, List<List<Integer>>> resultOfGroup = ph.getGroupedLines(linkToHigerLevel);
-        System.out.println(resultOfGroup);
-        return resultOfGroup;
+            HashMap<Integer, List<List<Integer>>> resultOfGroup = ph.getGroupedLines(linkToHigerLevel);
+            System.out.println(resultOfGroup);
+            return resultOfGroup;
+        }
+
+        List<MethodComponent> listOfComponent = ph.listOfComponent;
+        List<List<Integer>> finalResult = new ArrayList<>();
+        for (MethodComponent mC : listOfComponent) {
+            finalResult.add(new ArrayList<>(mC.changeScopeList));
+        }
+
+        HashMap<Integer, List<List<Integer>>> resultMap = new HashMap<>();
+        resultMap.put(finalResult.size(), finalResult);
+        return resultMap;
     }
 
     /**
@@ -258,13 +289,13 @@ public class ParserHelper {
      * @throws ParseException
      * @throws org.json.simple.parser.ParseException
      */
-    public static HashMap<Integer, HashMap<String, List<List<Integer>>>> getChangeGroups (String repoName, String commitId)
+    public static HashMap<Integer, HashMap<String, List<List<Integer>>>> getChangeGroups (String repoName, String commitId, String testPatch)
             throws IOException, ParseException, org.json.simple.parser.ParseException {
         List<String> listOfChangedFileNames = parseMetaJson(repoName, commitId);
         System.out.println("All file names: " + listOfChangedFileNames);
         HashMap<String, HashMap<Integer, List<List<Integer>>>> systematicChangeGroup = new HashMap<>();
         for (String file : listOfChangedFileNames) {
-            systematicChangeGroup.put(file, parseSingleFile(commitId, file, repoName));
+            systematicChangeGroup.put(file, parseSingleFile(commitId, file, repoName, testPatch));
         }
         HashMap<Integer, HashMap<String, List<List<Integer>>>> groupChanges = mapConverter(systematicChangeGroup);
         System.out.println("All grouped changes: " + groupChanges);

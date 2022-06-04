@@ -18,8 +18,8 @@ public class SearchMain {
         String currentPath = new java.io.File(".").getCanonicalPath();
         System.out.println("Current dir:" + currentPath);
 
-        String oldPath = "./DataSet/Patch1/OLD_JDT9800";
-        String newPath = "./DataSet/Patch1/NEW_JDT9801";
+        String oldPath = "./DataSet/testPatch1/old";
+        String newPath = "./DataSet/testPatch1/new";
 
         // Get all changed old file names
         // TOOD
@@ -50,9 +50,9 @@ public class SearchMain {
 //        curGroup.put("A.java", curFile);
 //        groups.put(0, curGroup);
 
-        //SearchEngine searchEngine = new SearchEngine(oldPath, newPath, "testpatch1", P_LANG.JAVA);
-        SearchEngine searchEngine = new SearchEngine(Paths.get(Config.REPO_PATH, "testpatch1", ".git").toString(),
-                "72d829fcf8da4f44a0ed251056c3cf0fe5f3ef65", P_LANG.JAVA);
+        SearchEngine searchEngine = new SearchEngine(oldPath, newPath, "testpatch1", P_LANG.JAVA);
+//        SearchEngine searchEngine = new SearchEngine(Paths.get(Config.REPO_PATH, "testpatch1", ".git").toString(),
+//                "72d829fcf8da4f44a0ed251056c3cf0fe5f3ef65", P_LANG.JAVA);
         searchEngine.run();
     }
 }

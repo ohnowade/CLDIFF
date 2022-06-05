@@ -1,12 +1,15 @@
 package edu.ucla.se;
 
+import java.nio.file.Path;
 import edu.ucla.se.utils.Config;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashSet;
 
 public class LCSMatcher {
     public static Map<String, Map<Integer, List<MissingChangeInfo>>> matchLCS(GitHandler gitHandler,
@@ -29,9 +32,10 @@ public class LCSMatcher {
                                                                           Map<String, List<List<Integer>>> curGroup) throws IOException {
         Map<String, Map<Integer, String>> dict = gitHandler.getOldFileContentByLine(curGroup);
         ArrayList<String> oldContentsCode = new ArrayList<>();
-
+        HashSet<String> fileSet = new HashSet<>();
         for (Map.Entry f: curGroup.entrySet()){        // file
             String fileName = (String)f.getKey();
+            fileSet.add(gitHandler.repoPath+"/"+fileName);
             if (!dict.containsKey(fileName)){
                 continue;
             }
@@ -40,7 +44,7 @@ public class LCSMatcher {
                 String code = "";
                 for (int j = 0; j < curGroup.get(fileName).get(i).size(); j++) {    // lines of code
                     Integer idx = curGroup.get(fileName).get(i).get(j);
-                    code += ";";       // new line
+                    //code += ";";       // new line
                     if (!fileCodeDict.containsKey(idx)){
                         continue;
                     }
@@ -56,18 +60,36 @@ public class LCSMatcher {
             System.out.println("code snippet");
             System.out.println(s);
         }
-        ScoreComputer sc = new LCSScoreComputer();
+        LCSScoreComputer sc = new LCSScoreComputer();
         PEAM peam = new PEAM(sc);
 
         System.out.println("Start Finding Patterns...");
-        peam.FindFrequentPattern(oldContentsCode, Config.SIM_SCORE_THRESH, Config.MIN_SUP_RATIO);
+        peam.FindFrequentPattern(oldContentsCode, 
+        		fileSet, 
+        		Config.SIM_SCORE_THRESH, 
+        		Config.MIN_SUP_RATIO,
+        		Config.MIN_UNIQUE_RATIO);
         peam.PrintPatterns();
         System.out.println("Done");
 
+        //Path p = Paths.get("D:\\2021-2022IMPORTANT\\cs230\\test-cases\\debug\\to-match.java");
+        //Map<String, List<MissingChangeInfo>> ret = peam.RecursiveFindMatch(p, 4, 2, 2, Config.MATCH_SCORE);
+        //System.out.println("Match Finish");
+		/*for(Map.Entry<String, List<MissingChangeInfo>> entry : ret.entrySet()) {
+			if (entry.getValue().size() == 0) continue;
+			System.out.println(entry.getKey());
+			for(MissingChangeInfo m : entry.getValue()) {
+				System.out.printf("%d->%d\n", m.startLine, m.endLine);
+			}
+		}
+		System.out.println(sc.getScore("if (((c1 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c1 < 0) || ((c2 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c2 < 0) || ((c3 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c3 < 0) || ((c4 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c4 < 0))", 
+				"if ((c1 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c1 < 0 || (c2 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c2 < 0 || (c3 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c3 < 0 || (c4 = Character.getNumericValue(this.source[this.currentPosition++])) > 15 || c4 < 0)\n"));
+		
+        System.exit(-1);*/
         int pattern_cnt = peam.GetPatternCnt();
 
         return gitHandler.matchLCS(peam,4,
-                                   (int) Math.max((pattern_cnt*Config.MATCH_PATTERN_RATIO),1),
-                                   (int) Math.max((pattern_cnt*Config.MATCH_PATTERN_RATIO),1), Config.MATCH_SCORE);
+                                   2,
+                                   2, Config.MATCH_SCORE);
     }
 }

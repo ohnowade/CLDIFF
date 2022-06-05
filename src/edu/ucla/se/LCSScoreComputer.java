@@ -16,6 +16,13 @@ public class LCSScoreComputer implements ScoreComputer {
 		return score > sim_ratio;
 	}
 	
+	public double getScore(String str1, String str2) {
+		double lcs_len = getLCSLength(str1, str2);
+		double total_len = str1.length() + str2.length();
+		double score = (2*lcs_len) / total_len;
+		return score;
+	}
+	
 	private int getLCSLength(String str1, String str2) {
 		int m = str1.length();
 		int n = str2.length();

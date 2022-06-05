@@ -3,12 +3,17 @@ import java.util.ArrayList;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Stream;
+
+import edu.ucla.se.utils.Config;
+
 import java.util.List;
 import java.util.HashMap;
+import java.util.Set;
 
 public class PEAM {
 	ScoreComputer score_computer;
@@ -20,7 +25,9 @@ public class PEAM {
 	
 	public void PrintPatterns() {
 		System.out.println(pattern_list.size());
-		for (Pattern p : this.pattern_list) {
+		for (int i = 0; i < pattern_list.size(); i++) {
+			System.out.println(i);
+			Pattern p = pattern_list.get(i);
 			System.out.println(p.GetString());
 		}
 	}
@@ -29,7 +36,7 @@ public class PEAM {
 		return pattern_list.size();
 	}
 	
-	public ArrayList<Pattern> FindFrequentPattern(
+	/*public ArrayList<Pattern> FindFrequentPattern(
 			Map<String, Map<Integer, String>> oldContents,
 			double sim_score_thres, double min_sup_ratio){
 		 
@@ -46,11 +53,14 @@ public class PEAM {
         return FindFrequentPattern(oldCodes, 
         		sim_score_thres, 
         		min_sup_ratio);
-	}
+	}*/
 	
 	
 	public ArrayList<Pattern> FindFrequentPattern(ArrayList<String> raw_changes, 
-			double sim_score_thres, double min_sup_ratio){
+			Set<String> file_set,
+			double sim_score_thres, 
+			double min_sup_ratio,
+			double min_unique_ratio)throws IOException {
 		this.pattern_list = new ArrayList<>();
 		int min_sup = (int)(min_sup_ratio * raw_changes.size());
 		
@@ -105,18 +115,41 @@ public class PEAM {
 			//for(String s: stmt_class) {
 			//	System.out.println(s);
 			//}
-			if (stmt_class.size() >= min_sup) {
+			int support = stmt_class.size(); 
+			if (support >= min_sup) {
 				//System.out.println("pass");
+				
 				ArrayList<Integer> stmt_class_pos = similar_stmts_pos.get(i);
 				String pattern = GetPattern(stmt_class);
-				double pattern_pos = GetPatternPosition(stmt_class_pos);
-				this.pattern_list.add(new Pattern(pattern, pattern_pos));
+				int total_appearance = this.GetTotalAppearance(file_set, pattern);
+				if (((double)support)/total_appearance > min_unique_ratio) {
+					double pattern_pos = GetPatternPosition(stmt_class_pos);
+					this.pattern_list.add(new Pattern(pattern, pattern_pos));
+					
+				}
+
 				//System.out.println(pattern);
 				//System.out.println(pattern_pos);
 			}
 		}
 		
+		
 		return this.pattern_list;
+	}
+	
+	private int GetTotalAppearance(Set<String> file_set, String pattern_str) throws IOException{
+		int cnt = 0;
+		for(String f_str : file_set) {
+			Path f_path = Paths.get(f_str);
+			StatementsWithLineNumber ss = new StatementsWithLineNumber(f_path);
+			for(int i = 0; i < ss.GetStatementCnt(); i++) {
+				String stmt = ss.GetStatementAt(i);
+				if (this.score_computer.IsSimilar(stmt, pattern_str, Config.MATCH_SCORE)) {
+					cnt++;
+				}
+			}
+		}
+		return cnt;
 	}
 	
 	public Map<String, List<MissingChangeInfo> > RecursiveFindMatch(Path search_path, 
@@ -160,6 +193,16 @@ public class PEAM {
 		List<MissingChangeInfo> results = new ArrayList<>();
 		StatementsWithLineNumber stmts_with_line = new StatementsWithLineNumber(file_name);
 		ArrayList<ArrayList <Integer> > match_results = MatchStatementAndPatterns(stmts_with_line.GetAllStatements(), match_score);
+		/*
+		for(int i = 0; i < stmts_with_line.GetStatementCnt(); i++) {
+			ArrayList<Integer> list = match_results.get(i);
+			System.out.println(stmts_with_line.GetStatementAt(i));
+			System.out.printf("%d: ", list.size());
+			for (Integer itg : list) {
+				System.out.printf("%d ", itg.intValue());
+			}
+			System.out.printf("\n");
+		}*/
 		int stmt_cnt = stmts_with_line.GetStatementCnt();
 		
 		int cur_start = 0;
@@ -167,6 +210,7 @@ public class PEAM {
 		int cur_interval = 0;
 		boolean cur_activate_status = false;
 		HashSet <Integer> cur_matched_patterns = new HashSet<Integer>();
+		int cur_matched_stmt_cnt = 0;
 		//System.out.println("Start Matching");
 		//System.out.println(stmt_cnt);
 		int i = 0;
@@ -176,9 +220,13 @@ public class PEAM {
 			//for(Integer k : hit_patterns) {
 			//	System.out.println(k);
 			//}
+			//System.out.printf("Statement %d:\n", i);
+			//System.out.println(stmts_with_line.GetStatementAt(i));
 			if (cur_activate_status == false) {
 				if (hit_patterns.size()>0) {
+			//		System.out.println("activate");
 					cur_activate_status = true;
+					cur_matched_stmt_cnt = 1;
 					cur_matched_patterns = hit_patterns;
 					cur_start = i;
 					cur_end = i;
@@ -188,6 +236,7 @@ public class PEAM {
 			else {
 				boolean renew_flag = false;
 				if (hit_patterns.size() > 0) {
+					/*
 					double max_pos = -1;
 					for (Integer p : cur_matched_patterns) {
 						double pos = pattern_list.get(p).GetPosition(); 
@@ -200,20 +249,36 @@ public class PEAM {
 							cur_matched_patterns.add(p);
 							renew_flag = true;
 						}
+					}*/
+					renew_flag = true;
+					for (Integer p : hit_patterns) {
+						if (cur_matched_patterns.contains(p) == false) {
+							//renew_flag = true;
+							cur_matched_patterns.add(p);
+						}
 					}
 				}
 				
 				if (renew_flag == true) {
+				//	System.out.println("renew");
 					cur_end = i;
 					cur_interval = 0;
+					cur_matched_stmt_cnt++;
 				}
 				else {
 					cur_interval++;
+					//System.out.printf("not renew, cur_interval=%d\n", cur_interval);
 				}
 				
 				if (cur_interval >= max_interval || i == stmt_cnt-1) {
 					cur_activate_status = false;
-					if (cur_end - cur_start + 1 >= min_stmt_cnt && cur_matched_patterns.size() >= min_hit_patterns) {
+					//System.out.println("deactivate");
+					if (cur_matched_stmt_cnt >= min_stmt_cnt && cur_matched_patterns.size() >= min_hit_patterns) {
+						//System.out.println("add new match");
+						//System.out.println(cur_start);
+						//System.out.println(stmts_with_line.GetStatementAt(cur_start));
+						//System.out.println(stmts_with_line.GetStartLineFor(cur_start));
+						//System.exit(0);
 						MissingChangeInfo m = new MissingChangeInfo( 
 								stmts_with_line.GetStartLineFor(cur_start),
 								stmts_with_line.GetEndLineFor(cur_end));

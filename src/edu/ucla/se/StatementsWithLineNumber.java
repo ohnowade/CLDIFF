@@ -62,6 +62,7 @@ public class StatementsWithLineNumber extends Statements {
 				
 					System.out.println(i);
 					System.out.println(statement);
+					System.out.println(statement.length());
 					System.out.println(cur_line);
 					System.out.println("Something is wrong when spliting files into statements with line numbers");
 					System.out.print(snippet);
@@ -71,6 +72,7 @@ public class StatementsWithLineNumber extends Statements {
 					for(int k = 0; k < s_size; k++) {
 						System.out.println(statement.equals(s.GetStatementAt(k)));
 						System.out.println(s.GetStatementAt(k));
+						System.out.println(s.GetStatementAt(k).length());
 					}
 					System.exit(-1);
 				}

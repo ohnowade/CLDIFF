@@ -68,27 +68,28 @@ public class SearchEngine {
             System.out.println();
 
             //============== STEP 2.1: GENERATE REGEX AND MATCH IN CURRENT COMMIT ================
-            System.out.println("============== Generating and Matching Regex in Current Commit =================");
-            Map<Integer, List<String>> regex = new RegexGenerator(groups, this.gitHandler).generateRegex();
-            Map<String, Map<Integer, List<MissingChangeInfo>>> regexResults = gitHandler.matchRegex(regex);
-            System.out.println("Results found by Regex:");
-            gitHandler.printResult(regexResults);
-            System.out.println();
-
-            //=================== STEP 2.2: LCS MATCH IN CURRENT COMMIT ==========================
-//            System.out.println("================== Applying LCS Matching in Current Commit =====================");
-//            System.out.printf("sim_score_thresh = %f\nmin_sup_ratio = %f\nmatch_pattern_ratio = %f\nmatch_score = %f\n",
-//                                Config.SIM_SCORE_THRESH, Config.MIN_SUP_RATIO, Config.MATCH_PATTERN_RATIO, Config.MATCH_SCORE);
-//            Map<String, Map<Integer, List<MissingChangeInfo>>> LCSResults = LCSMatcher.matchLCS(gitHandler, groups);
-//            System.out.println("Results found by LCS:");
-//            gitHandler.printSimpleResult(LCSResults);
+//            System.out.println("============== Generating and Matching Regex in Current Commit =================");
+//            Map<Integer, List<String>> regex = new RegexGenerator(groups, this.gitHandler).generateRegex();
+//            Map<String, Map<Integer, List<MissingChangeInfo>>> regexResults = gitHandler.matchRegex(regex);
+//            System.out.println("Results found by Regex:");
+//            gitHandler.printResult(regexResults);
 //            System.out.println();
 
+            Map<String, Map<Integer, List<MissingChangeInfo>>> regexResults = new HashMap<>();
+            //=================== STEP 2.2: LCS MATCH IN CURRENT COMMIT ==========================
+            System.out.println("================== Applying LCS Matching in Current Commit =====================");
+            System.out.printf("sim_score_thresh = %f\nmin_sup_ratio = %f\nmatch_pattern_ratio = %f\nmatch_score = %f\n",
+                                Config.SIM_SCORE_THRESH, Config.MIN_SUP_RATIO, Config.MATCH_PATTERN_RATIO, Config.MATCH_SCORE);
+            Map<String, Map<Integer, List<MissingChangeInfo>>> LCSResults = LCSMatcher.matchLCS(gitHandler, groups);
+            System.out.println("Results found by LCS:");
+            gitHandler.printSimpleResult(LCSResults);
+            System.out.println();
+
             //======================== STEP 3: COMBINE MATCHING OUTPUT ===========================
-//            System.out.println("======================== Combining Matching Results ============================");
-//            Map<String, Map<Integer, List<MissingChangeInfo>>> results = mergeResults(regexResults, LCSResults);
+            System.out.println("======================== Combining Matching Results ============================");
+            Map<String, Map<Integer, List<MissingChangeInfo>>> results = mergeResults(regexResults, LCSResults);
 //            System.out.println(results);
-//            gitHandler.printResult(results);
+            gitHandler.printResult(results);
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);

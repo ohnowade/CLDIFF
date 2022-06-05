@@ -16,11 +16,13 @@ public class SearchMain {
         System.out.println("Start running search...");
 
         int patchNumber = 2; // you only need to edit patch number here
-        boolean highlevelGroupFLAG = true;
+        boolean highlevelGroupFLAG = false;
 
-        String oldPath = String.format("./DataSet/testPatch%d/old", patchNumber);
-        String newPath = String.format("./DataSet/testPatch%d/new", patchNumber);
+        //String oldPath = String.format("./DataSet/testPatch%d/old", patchNumber);
+        //String newPath = String.format("./DataSet/testPatch%d/new", patchNumber);
 
+        String oldPath = "D:\\2021-2022IMPORTANT\\cs230\\test-cases\\DataSet\\Patch2/OLD_JDT10610";
+        String newPath = "D:\\2021-2022IMPORTANT\\cs230\\test-cases\\DataSet\\Patch2/NEW_JDT10611";
 //=======
 //        String oldPath = "../DataSet/Patch1/NEW_JDT9801";
 //        String newPath = "../DataSet/Patch1/OLD_JDT9800";

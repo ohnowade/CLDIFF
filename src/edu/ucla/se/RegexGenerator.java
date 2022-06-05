@@ -303,15 +303,15 @@ public class RegexGenerator {
                 pattern = pattern.replaceAll("\\[", "\\\\[");
                 pattern = pattern.replaceAll("\\]", "\\\\]");
                 pattern = pattern.replaceAll("(\\.\\*){2,}", ".*");
-                String _check = pattern.replaceAll("\\.\\*","");
+                String _check = pattern.replaceAll("(\\.\\*)|(\\\\n)","");
                 String _check2 = pattern.replaceAll("\\w", "");
                 if (_check.length() != 0 && _check2.length() != pattern.length()){
                     regexSet.add(pattern);
-                }else{
-                    regexSet.add(null);
                 }
             }
-            ret.put(g, regexSet);
+            if (regexSet.size() > 0){
+                ret.put(g, regexSet);
+            }
         }
         return ret;
     }

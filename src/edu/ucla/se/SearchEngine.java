@@ -72,7 +72,7 @@ public class SearchEngine {
             Map<Integer, List<String>> regex = new RegexGenerator(groups, this.gitHandler).generateRegex();
             Map<String, Map<Integer, List<MissingChangeInfo>>> regexResults = gitHandler.matchRegex(regex);
             System.out.println("Results found by Regex:");
-            gitHandler.printSimpleResult(regexResults);
+            gitHandler.printResult(regexResults);
             System.out.println();
 
             //=================== STEP 2.2: LCS MATCH IN CURRENT COMMIT ==========================

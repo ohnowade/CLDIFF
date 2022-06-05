@@ -11,7 +11,7 @@ public class Config {
 
     public final static double MIN_SUP_RATIO = 0.8;
 
-    public final static double MATCH_SCORE = 0.9;
+    public final static double MATCH_SCORE = 0.95;
 
     public final static double MATCH_PATTERN_RATIO = 0.3;
 

@@ -28,6 +28,7 @@ public class LCSMatchMain {
         
         System.out.printf("Start missing change search for git repo %s and commit %s...\n", repoPath, commitId);
         */
+		/*
 		String oldPath = "D:\\2021-2022IMPORTANT\\cs230/test-cases/testPatch/old";
         String newPath = "D:\\2021-2022IMPORTANT\\cs230/test-cases/testPatch/new";
         String repoName = "abc";
@@ -113,7 +114,7 @@ public class LCSMatchMain {
 			for(MissingChangeInfo m : entry.getValue()) {
 				System.out.printf("%d->%d\n", m.startLine, m.endLine);
 			}
-		}
+		}*/
 		/*
 		Path path = Paths.get("D:/2021-2022IMPORTANT/cs230/test-cases/Dataset/Patch2/code.txt");
 		String code = Files.readString(path);

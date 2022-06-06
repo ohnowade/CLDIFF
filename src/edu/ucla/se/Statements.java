@@ -41,6 +41,7 @@ public class Statements {
 		String[] split_code = code_snippet.split(";");
 		for(int i = 0; i < split_code.length; i++) {
 			split_code[i] = split_code[i].trim();
+			split_code[i] = split_code[i].replaceAll("\\s+", " ");
 		}
 		this.statements = new ArrayList<String>();
 		Collections.addAll(this.statements, split_code);

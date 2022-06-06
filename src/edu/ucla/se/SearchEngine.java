@@ -68,6 +68,7 @@ public class SearchEngine {
             System.out.println();
 
             //============== STEP 2.1: GENERATE REGEX AND MATCH IN CURRENT COMMIT ================
+
             System.out.println("============== Generating and Matching Regex in Current Commit =================");
             Map<Integer, List<String>> regex = new RegexGenerator(groups, this.gitHandler).generateRegex();
             Map<String, Map<Integer, List<MissingChangeInfo>>> regexResults = gitHandler.matchRegex(regex);
@@ -84,9 +85,11 @@ public class SearchEngine {
             gitHandler.printSimpleResult(LCSResults);
             System.out.println();
 
+
             //======================== STEP 3: COMBINE MATCHING OUTPUT ===========================
             System.out.println("======================== Combining Matching Results ============================");
             Map<String, Map<Integer, List<MissingChangeInfo>>> results = mergeResults(regexResults, LCSResults);
+
             System.out.println(results);
             gitHandler.printResult(results);
         } catch (Exception e) {
